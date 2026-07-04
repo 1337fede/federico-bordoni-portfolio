@@ -1,15 +1,13 @@
-On Linux:
-
+On Linux, run the following commands to install dependencies:
 - `npm install marked@4`
 - `sudo apt install nodejs npm`
-- `npm install --save-dev gh-pages`
-
+- `npm install --save-dev gh-pages@6.3.0`
+- Then, test locally with:
 ```
 npm run build
 npx serve dist
 ```
-
-- It will then output:
+It will then output:
 
 ```
    ┌───────────────────────────────────────────┐
@@ -22,4 +20,9 @@ npx serve dist
    │   Copied local address to clipboard!      │
    │                                           │
    └───────────────────────────────────────────┘
+```
+- Deploy to GitHub Pages (publishes /dist folder to GitHub Pages) with:
+```
+npm run build
+npx gh-pages -d dist
 ```
