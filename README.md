@@ -26,3 +26,4 @@ It will then output:
 npm run build
 npx gh-pages -d dist
 ```
+and then access it via: `https://1337fede.github.io/federico-bordoni-portfolio/`
