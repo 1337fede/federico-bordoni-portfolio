@@ -2,12 +2,15 @@ On Linux:
 
 - `npm install marked@4`
 - `sudo apt install nodejs npm`
+- `npm install --save-dev gh-pages`
 
 ```
 npm run build
 npx serve dist
 ```
+
 - It will then output:
+
 ```
    ┌───────────────────────────────────────────┐
    │                                           │
