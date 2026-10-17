@@ -2,7 +2,13 @@
   "name": "federico-bordoni-portfolio",
   "version": "1.0.0",
   "scripts": {
-  "build": "node build/build.js",
-  "deploy": "gh-pages -d dist"
-}
+    "build": "node build/build.js",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "marked": "^4.3.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
 }

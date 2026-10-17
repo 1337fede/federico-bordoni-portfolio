@@ -2,32 +2,32 @@ const fs = require("fs");
 const path = require("path");
 const marked = require("marked");
 
-const DATA_ROOT = "/media/fede-ubuntu/STORAGE/CW";
+const ASSETS_DIR = process.env.ASSETS_DIR || "/external-assets";
 
-// ---------------- DATA ----------------
 const data = JSON.parse(
     fs.readFileSync(
-        path.join(DATA_ROOT, "_assets/events.json"),
+        path.join(ASSETS_DIR, "events.json"),
         "utf-8"
     )
 );
 
-
-// ---------------- TEMPLATE ----------------
 const template = fs.readFileSync(
     path.join(__dirname, "../src/index.template.html"),
     "utf-8"
 );
 
-// ---------------- HELPERS ----------------
 function resolveDescription(desc) {
     if (!desc) return "";
     desc = desc.trim();
 
     if (desc.startsWith("@file ")) {
-        const filePath = desc.replace("@file ", "").trim();
+        let filePath = desc.slice("@file ".length).trim();
+
+        // Paths in events.json include the _assets/ prefix.
+        filePath = filePath.replace(/^_assets[\\/]/, "");
+
         return fs.readFileSync(
-            path.join(DATA_ROOT, filePath),
+            path.join(ASSETS_DIR, filePath),
             "utf-8"
         );
     }
@@ -42,17 +42,14 @@ function getVimeoEmbed(url) {
     return `https://player.vimeo.com/video/${match[1]}`;
 }
 
-// ---------------- FILTER ----------------
 const projects = data
     .filter(e => e.entrytype === "projects")
     .sort((a, b) => (b.enddate || "").localeCompare(a.enddate || ""));
 
-// ---------------- BUILD SLIDES ----------------
-let slides = "";   // ✔ FIXED (was missing)
+let slides = "";
 
 for (const project of projects) {
 
-    // ---------------- VIDEO ----------------
     let videoHTML = "";
 
     if (project["local-content"]) {
@@ -74,7 +71,6 @@ for (const project of projects) {
         }
     }
 
-    // ---------------- MARKDOWN ----------------
     const description = marked.parse(
         resolveDescription(project.description || "")
     );
@@ -83,7 +79,6 @@ for (const project of projects) {
         resolveDescription(project.tasks || "")
     );
 
-    // ---------------- SLIDE ----------------
     slides += `
 <section>
     <div class="split-slide">
@@ -141,10 +136,8 @@ for (const project of projects) {
 `;
 }
 
-// ---------------- FINAL OUTPUT ----------------
 const finalHTML = template.replace("{{SLIDES}}", slides);
 
-// ---------------- WRITE FILE ----------------
 fs.mkdirSync(path.join(__dirname, "../dist"), { recursive: true });
 
 fs.copyFileSync(
@@ -158,7 +151,7 @@ fs.writeFileSync(
 );
 
 fs.cpSync(
-    path.join(DATA_ROOT, "_assets/fonts"),
+    path.join(ASSETS_DIR, "fonts"),
     path.join(__dirname, "../dist/fonts"),
     { recursive: true }
 );
